@@ -1,0 +1,82 @@
+debug: true
+server:
+  port: 8080
+  shutdown: graceful
+  tomcat:
+    max-http-form-post-size: 100MB
+    max-connections: 20
+    connection-timeout: 10000
+    threads:
+      max: 20
+      min-spare: 10
+  error:
+    path: /error
+    include-stacktrace: always
+    include-exception: true
+    include-message: always
+    include-binding-errors: always
+    whitelabel:
+      enabled: false
+  servlet:
+    context-path: /
+spring:
+  main:
+    banner-mode: off
+    allow-bean-definition-overriding: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+      file-size-threshold: 0
+  freemarker:
+    enabled: false
+  mvc:
+    throw-exception-if-no-handler-found: true
+  datasource:
+    platform: mysql
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://10.0.0.3:3306/example?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+    # schema: classpath:sql/init-schema.sql
+    # data: classpath:sql/init-data.sql
+    initialization-mode: always
+    continue-on-error: false
+    hikari:
+      pool-name: HikariCP
+      auto-commit: true
+      minimum-idle: 5
+      maximum-pool-size: 15
+      max-lifetime: 1800000
+      idle-timeout: 30000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+  redis:
+    database: 0
+    host: 10.0.0.3
+    port: 6379
+    password: eW95b2hyLmNvbQ==
+    timeout: 300
+    jedis:
+      pool:
+        max-active: 8  # 最大连接数
+        max-wait: -1   # 最大阻塞等待时间
+        max-idle: 8    # 最大空闲时间
+        min-idle: 0    # 最小空闲时间
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-value: CURRENT_TIMESTAMP()
+      logic-not-delete-value: NULL
+  configuration:
+    default-enum-type-handler: org.apache.ibatis.type.EnumOrdinalTypeHandler
+  type-enums-package: com.nekoimi.boot.modules.*.enums
+  mapper-locations: classpath*:com/nekoimi/boot/modules/**/mapper/**.xml
+  check-config-location: true
+jwt:
+  secret: MjAyMOW5tCAwNeaciCAyOeaXpSDmmJ/mnJ/kupQgMTc6NTM6MjEgQ1NUCg==
+  ttl: 60                       # token有效期 (默认一小时)
+  refresh-ttl: 20160            # token无痛刷新有效期 (默认2周)
+  refresh-concurrent-ttl: 5     # 并发请求临时缓存有效期 (默认5分钟)
