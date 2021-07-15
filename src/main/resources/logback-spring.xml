@@ -39,7 +39,7 @@
         </filter>
     </appender>
 
-    <logger name="com.yoyohr.lowcode" level="debug"/>
+    <logger name="com.nekoimi.boot" level="debug"/>
     <logger name="org.springframework.boot.autoconfigure" level="info" />
     <logger name="org.springframework.boot.context" level="info" />
     <logger name="org.springframework.web.server" level="info" />
