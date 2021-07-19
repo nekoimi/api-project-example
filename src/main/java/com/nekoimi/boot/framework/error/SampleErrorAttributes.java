@@ -21,6 +21,7 @@ import org.springframework.web.context.request.WebRequest;
 import javax.servlet.ServletException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -190,7 +191,7 @@ public class SampleErrorAttributes extends DefaultErrorAttributes {
                 put("message", message);
                 put("method", method);
                 put("path", path);
-                put("timestamp", timestamp);
+                put("timestamp", timestamp.toInstant(ZoneOffset.UTC).toEpochMilli());
             }};
         }
     }
