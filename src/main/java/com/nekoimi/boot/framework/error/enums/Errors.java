@@ -12,6 +12,10 @@ public enum Errors implements IError {
 
     // 和 Http 相近的异常， code 从 10000 开始
     REQUEST_VALIDATE_EXCEPTION(10004, "Invalid request"),
+
+    TOKEN_CANNOT_BE_REFRESH_EXCEPTION(10100, "Token cannot be refresh"),
+    TOKEN_HAS_BEEN_BLACKLISTED_EXCEPTION(10101, "The token has been blacklisted"),
+
     HTTP_STATUS_BAD_REQUEST(10400, "Bad request"),
     HTTP_STATUS_UNAUTHORIZED(10401, "Unauthorized"),
     HTTP_STATUS_FORBIDDEN(10403, "Forbidden"),
@@ -25,6 +29,7 @@ public enum Errors implements IError {
 
     // 底层中间件相关异常，code 从 50000 开始
     ID_GENERATOR_SYSTEM_CLOCK_EXCEPTION(50000, "System clock error"),
+    REDIS_ERROR_EXCEPTION(50001, "Redis error"),
 
     // 客户端请求异常
     DEFAULT_CLIENT_ERROR(99400, "无效的请求！"),
