@@ -19,9 +19,6 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.ServletException;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -154,7 +151,7 @@ public class SampleErrorAttributes extends DefaultErrorAttributes {
         private String message = Errors.DEFAULT_SERVER_ERROR.getMessage();
         private String method = HttpMethod.GET.name();
         private String path = "/";
-        private LocalDateTime timestamp = LocalDateTime.now(ZoneId.of("Asia/Shanghai"));
+        private final long timestamp = System.currentTimeMillis();
 
         private ErrorAttributes() {
         }
@@ -181,17 +178,13 @@ public class SampleErrorAttributes extends DefaultErrorAttributes {
             this.path = path;
         }
 
-        public void withTimestamp(LocalDateTime timestamp) {
-            this.timestamp = timestamp;
-        }
-
         public Map<String, Object> build() {
             return new LinkedHashMap<>() {{
                 put("code", code);
                 put("message", message);
                 put("method", method);
                 put("path", path);
-                put("timestamp", timestamp.toInstant(ZoneOffset.UTC).toEpochMilli());
+                put("timestamp", timestamp);
             }};
         }
     }
