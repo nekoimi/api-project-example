@@ -7,10 +7,10 @@ import com.nekoimi.boot.framework.error.enums.Errors;
  */
 public class RequestValidationException extends BaseRuntimeException {
     public RequestValidationException() {
-        super(Errors.HTTP_REQUEST_VALIDATE_EXCEPTION);
+        super(Errors.REQUEST_VALIDATE_EXCEPTION);
     }
 
     public RequestValidationException(String message) {
-        super(Errors.HTTP_REQUEST_VALIDATE_EXCEPTION, message);
+        super(Errors.REQUEST_VALIDATE_EXCEPTION, message);
     }
 }

@@ -1,10 +1,14 @@
 package com.nekoimi.boot.framework.configuration;
 
+import com.nekoimi.boot.common.annotaction.resolver.OperatorArgumentResolver;
 import com.nekoimi.boot.framework.constants.RequestConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
 
 /**
  * nekoimi  2021/7/19 上午11:56
@@ -17,16 +21,16 @@ public class WebConfiguration implements WebMvcConfigurer {
         log.debug("[Auto Configuration] WebConfiguration!");
     }
 
-//    /**
-//     * 参数注入
-//     *
-//     * @param argumentResolvers
-//     */
-//    @Override
-//    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-//
-//        log.debug("ArgumentResolver registry!");
-//    }
+    /**
+     * 参数注入
+     *
+     * @param argumentResolvers
+     */
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        argumentResolvers.add(new OperatorArgumentResolver());
+        log.debug("ArgumentResolver registry!");
+    }
 
     /**
      *

@@ -11,20 +11,20 @@ public enum Errors implements IError {
     //
 
     // 和 Http 相近的异常， code 从 10000 开始
-    HTTP_REQUEST_VALIDATE_EXCEPTION(10004, "Invalid request"),
+    REQUEST_VALIDATE_EXCEPTION(10004, "Invalid request"),
     HTTP_STATUS_BAD_REQUEST(10400, "Bad request"),
     HTTP_STATUS_UNAUTHORIZED(10401, "Unauthorized"),
     HTTP_STATUS_FORBIDDEN(10403, "Forbidden"),
     HTTP_STATUS_NOT_FOUND(10404, "Not found"),
     HTTP_STATUS_METHOD_NOT_ALLOWED(10405, "Method not allowed"),
     // 业务相关异常，code 从 20000 开始往上加
-    FAILED_TO_OPERATION_EXCEPTION(20001, "Operation failed!"),
-    ENTITY_CREATE_FAILED_EXCEPTION(20004, "Resource creation failed"),
+    FAILED_TO_OPERATION_ERROR_EXCEPTION(20001, "Operation failed"),
+    FAILED_TO_NOT_FOUND_ERROR_EXCEPTION(20002, "Resource not found"),
+    FAILED_TO_CREATE_ERROR_EXCEPTION(20003, "Failed to create resource"),
+    FAILED_TO_UPDATE_ERROR_EXCEPTION(20004, "Failed to update resource"),
 
     // 底层中间件相关异常，code 从 50000 开始
-    REDIS_OPERATION_ERROR(50000, "Redis operation error!"),
-    DYNAMIC_TABLE_OPERATE_ERROR(50001, "Dynamic table operate!"),
-    DYNAMIC_EXECUTE_ERROR(50002, "Dynamic execute error!"),
+    ID_GENERATOR_SYSTEM_CLOCK_EXCEPTION(50000, "System clock error"),
 
     // 客户端请求异常
     DEFAULT_CLIENT_ERROR(99400, "无效的请求！"),
