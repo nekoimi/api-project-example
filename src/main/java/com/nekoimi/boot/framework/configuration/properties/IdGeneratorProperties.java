@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 @Component
-@ConfigurationProperties(prefix = "app.id.generator")
+@ConfigurationProperties(prefix = "app.id-generator")
 public class IdGeneratorProperties {
     // 机器ID
     private long workerId;

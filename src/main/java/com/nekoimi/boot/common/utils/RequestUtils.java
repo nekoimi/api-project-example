@@ -2,8 +2,6 @@ package com.nekoimi.boot.common.utils;
 
 import com.nekoimi.boot.framework.constants.RequestConstants;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,8 +10,6 @@ import javax.servlet.http.HttpServletRequest;
  * nekoimi  2021/7/7 上午10:34
  */
 public class RequestUtils {
-    private final static Logger logger = LoggerFactory.getLogger(RequestUtils.class);
-
     public static Boolean isGet(HttpServletRequest request) {
         return HttpMethod.GET.toString().equalsIgnoreCase(request.getMethod());
     }

@@ -15,7 +15,7 @@ class ApplicationTests {
 
     @Test
     void testEncoder() {
-        String encrypt = encoder.encrypt("Hello Worlddsfsdfsdf4324234@fdfsdf");
+        String encrypt = encoder.encrypt("Hello World");
         System.out.println(encrypt);
         String decrypt = encoder.decrypt(encrypt);
         System.out.println(decrypt);

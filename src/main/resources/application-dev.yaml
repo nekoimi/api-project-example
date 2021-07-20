@@ -20,6 +20,8 @@ server:
   servlet:
     context-path: /
 spring:
+  application:
+    name: application-name
   main:
     banner-mode: off
     allow-bean-definition-overriding: true
@@ -78,11 +80,10 @@ mybatis-plus:
 
 app:
   main:
-    key: fdsfsdfsf#fdsfs@fdsfds%gfdgdgJ/kupQgMTc6NTM6MjEgQ1NUCg==Worlddsfsdfsdf4324234@fdfsdf
-  id:
-    generator:
-      worker-id: 1
-      data-center-id: 1
+    key: abc123456
+  id-generator:
+    worker-id: 1
+    data-center-id: 1
   jwt:
     secret: mmJ/mnJ/kupQgMTc6NTM6MjEgQ1NUCg==
     ttl: 60                       # token有效期 (默认一小时)
