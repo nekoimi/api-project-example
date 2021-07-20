@@ -28,6 +28,11 @@ public class UserController extends BaseController {
     @Autowired
     private UserService targetService;
 
+    @GetMapping("ajax_test")
+    public JsonResponse ajaxTest() {
+        return ok("hello world");
+    }
+
     @PostMapping("api/v1/test_login")
     public JsonResponse login(@RequestBody Map<String, Object> map) {
         LoginResult result = targetService.login(map.getOrDefault("mobile", "").toString(), "");

@@ -2,6 +2,7 @@ package com.nekoimi.boot;
 
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.nekoimi.boot.framework.contract.PasswordEncoder;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,7 +19,7 @@ class ApplicationTests {
         String encrypt = encoder.encrypt("Hello World");
         System.out.println(encrypt);
         String decrypt = encoder.decrypt(encrypt);
-        System.out.println(decrypt);
+        Assertions.assertEquals("Hello World", decrypt);
     }
 
     @Test
