@@ -5,7 +5,6 @@ import com.nekoimi.boot.common.utils.RequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
@@ -14,9 +13,6 @@ import java.util.Map;
 public abstract class BaseController {
     @Autowired
     protected HttpServletRequest request;
-
-    @Autowired
-    protected HttpServletResponse response;
 
     protected int page() {
         return RequestUtils.getPage(request);
@@ -27,18 +23,18 @@ public abstract class BaseController {
     }
 
     protected JsonResponse ok() {
-        return JsonResponse.ok().build();
+        return JsonResponse.ok().withMethod(request.getMethod()).withPath(request.getRequestURI()).build();
     }
 
     protected JsonResponse ok(Object data) {
-        return JsonResponse.ok(data).build();
+        return JsonResponse.ok(data).withMethod(request.getMethod()).withPath(request.getRequestURI()).build();
     }
 
     protected JsonResponse ok(String name, Object data) {
-        return JsonResponse.ok(Map.of(name, data)).build();
+        return JsonResponse.ok(Map.of(name, data)).withMethod(request.getMethod()).withPath(request.getRequestURI()).build();
     }
 
     protected <T> JsonResponse ok(IPage<T> page) {
-        return JsonResponse.ok(page).build();
+        return JsonResponse.ok(page).withMethod(request.getMethod()).withPath(request.getRequestURI()).build();
     }
 }

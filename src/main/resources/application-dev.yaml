@@ -39,7 +39,7 @@ spring:
     platform: mysql
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mysql://10.0.0.3:3306/example?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://127.0.0.1:3306/test_example?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: 123456
     # schema: classpath:sql/init-schema.sql
@@ -57,7 +57,7 @@ spring:
       connection-test-query: SELECT 1
   redis:
     database: 0
-    host: 10.0.0.3
+    host: 127.0.0.1
     port: 6379
     password: eW95b2hyLmNvbQ==
     timeout: 300

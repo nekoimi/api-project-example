@@ -30,14 +30,12 @@ public class JWTServiceImpl implements JWTService {
     private final Algorithm algorithm;
     private final JWTProperties jwtProperties;
     private final JWTStorage jwtStorage;
-    private final JWTSubjectService jwtSubjectService;
 
-    public JWTServiceImpl(JWTProperties jwtProperties, JWTStorage jwtStorage, JWTSubjectService jwtSubjectService) {
+    public JWTServiceImpl(JWTProperties jwtProperties, JWTStorage jwtStorage) {
         this.issuer = getClass().toString();
         this.algorithm = Algorithm.HMAC256(jwtProperties.getSecret());
         this.jwtProperties = jwtProperties;
         this.jwtStorage = jwtStorage;
-        this.jwtSubjectService = jwtSubjectService;
     }
 
     @Override
@@ -72,7 +70,7 @@ public class JWTServiceImpl implements JWTService {
     }
 
     @Override
-    public synchronized String refresh(String token) {
+    public synchronized String refresh(String token, JWTSubjectService jwtSubjectService) {
         // todo 这里需要检查这个token是否已经被刷新过 旧Token已经被刷新过就不需要在刷新了
         String refreshedToken = jwtStorage.getRefreshed(token);
         if (StringUtils.isNotBlank(refreshedToken)) {

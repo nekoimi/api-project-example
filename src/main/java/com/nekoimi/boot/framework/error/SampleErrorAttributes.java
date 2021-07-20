@@ -3,11 +3,13 @@ package com.nekoimi.boot.framework.error;
 import com.nekoimi.boot.framework.contract.IError;
 import com.nekoimi.boot.framework.error.enums.Errors;
 import com.nekoimi.boot.framework.error.exception.BaseRuntimeException;
+import com.nekoimi.boot.framework.error.exception.FailedToOperationErrorException;
 import com.nekoimi.boot.framework.error.exception.RequestValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -75,6 +77,10 @@ public class SampleErrorAttributes extends DefaultErrorAttributes {
                 error = error.getCause();
             }
             log.debug(error.getClass().toString());
+            if (error instanceof DataAccessException) {
+                error = new FailedToOperationErrorException(error.getMessage());
+            }
+
             if (error instanceof HttpMessageNotReadableException) {
                 error = new RequestValidationException("Request body is missing!");
             }
