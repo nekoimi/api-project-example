@@ -20,7 +20,6 @@ import com.nekoimi.boot.framework.mybatis.service.BaseService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,15 +51,13 @@ public abstract class BaseServiceImpl<M extends BaseMapper<E>, E> implements Bas
         return info;
     }
 
-    @Cacheable(cacheNames = "entity_model", key = "#root.targetClass")
     @Override
     @SuppressWarnings("unchecked")
     public Class<E> modelClazz() {
         Class<E> entitiClass = null;
         Type genericSuperclass = this.getClass().getGenericSuperclass();
         if (genericSuperclass instanceof ParameterizedType) {
-            Type[] actualTypeArguments = ((ParameterizedType) genericSuperclass)
-                    .getActualTypeArguments();
+            Type[] actualTypeArguments = ((ParameterizedType) genericSuperclass).getActualTypeArguments();
             if (actualTypeArguments != null && actualTypeArguments.length > 1) {
                 entitiClass = (Class<E>) actualTypeArguments[1];
             }
