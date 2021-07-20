@@ -3,11 +3,10 @@ package com.nekoimi.boot.framework.gen;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.nekoimi.boot.framework.error.exception.IdGeneratorSystemClockException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.DigestUtils;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
 /**
@@ -99,9 +98,9 @@ public class SnowflakeIdGenerator implements IdentifierGenerator {
     }
 
     public static String generateOneId() {
-        byte[] bytes = String.valueOf(generateId()).getBytes(StandardCharsets.UTF_8);
+        long id = generateId();
 
-        return DigestUtils.md5DigestAsHex(bytes);
+        return DigestUtils.md5Hex(String.valueOf(id));
     }
 
     public static long getNextTimeMillis(long lastTimeMillis) {
