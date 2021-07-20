@@ -1,6 +1,7 @@
 package com.nekoimi.boot.modules.user.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.nekoimi.boot.common.annotaction.Operator;
 import com.nekoimi.boot.framework.mybatis.entity.BaseEntity;
 import com.nekoimi.boot.framework.http.JsonResponse;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -31,6 +32,11 @@ public class UserController extends BaseController {
     public JsonResponse login(@RequestBody Map<String, Object> map) {
         LoginResult result = targetService.login(map.getOrDefault("mobile", "").toString(), "");
         return ok(result);
+    }
+
+    @GetMapping("api/v1/user/me")
+    public JsonResponse me(@Operator User user) {
+        return ok(user);
     }
 
     /**

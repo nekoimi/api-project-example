@@ -11,7 +11,6 @@ import com.nekoimi.boot.framework.error.exception.RequestAuthorizedException;
 import com.nekoimi.boot.framework.error.exception.RequestBadCredentialsException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -20,6 +19,9 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Nekoimi  2020/5/31 21:19
@@ -27,6 +29,7 @@ import java.io.IOException;
 @Slf4j
 @Component
 public class LoginRequiredFilter implements Filter {
+    private final List<String> excludeUrlList = new ArrayList<>();
     private final JWTService jwtService;
     private final JWTSubjectService jwtSubjectService;
     private final RequestMappingHandlerMapping requestMappingHandler;
@@ -35,6 +38,14 @@ public class LoginRequiredFilter implements Filter {
         this.jwtService = jwtService;
         this.jwtSubjectService = jwtSubjectService;
         this.requestMappingHandler = requestMappingHandler;
+    }
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        String exclude = filterConfig.getInitParameter("exclude");
+        if (StringUtils.isNotBlank(exclude)) {
+            excludeUrlList.addAll(Arrays.asList(exclude.split("[,]")));
+        }
     }
 
     @Override
@@ -50,7 +61,30 @@ public class LoginRequiredFilter implements Filter {
             log.error(e.getMessage());
         }
         if (handler != null) {
-            doLoginRequired(request, response);
+            String path = request.getRequestURI();
+            if (!excludeUrlList.contains(path)) {
+                boolean needCheck = true;
+                // 前缀匹配
+                for (String excludeUrl : excludeUrlList) {
+                    if (path.equals(excludeUrl)) {
+                        needCheck = false;
+                    } else {
+                        if (StringUtils.endsWith(excludeUrl, "*")) {
+                            int i = 10;
+                            do {
+                                excludeUrl = StringUtils.removeEnd(excludeUrl, "*");i--;
+                            } while (i >= 0 && StringUtils.endsWith(excludeUrl, "*"));
+                            excludeUrl = StringUtils.removeEnd(excludeUrl, "/");
+                            if (StringUtils.startsWith(path, excludeUrl)) {
+                                needCheck = false;
+                            }
+                        }
+                    }
+                }
+                if (needCheck) {
+                    doLoginRequired(request, response);
+                }
+            }
         }
         log.debug("-------------------------- LoginRequiredFilter END --------------------------");
 

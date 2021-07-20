@@ -1,6 +1,7 @@
 package com.nekoimi.boot.common.annotaction.resolver;
 
 import com.nekoimi.boot.common.annotaction.Operator;
+import com.nekoimi.boot.framework.constants.RequestConstants;
 import com.nekoimi.boot.framework.error.exception.RequestAuthorizedException;
 import com.nekoimi.boot.framework.error.exception.RequestForbiddenException;
 import org.springframework.core.MethodParameter;
@@ -24,7 +25,7 @@ public class OperatorArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) throws Exception {
-        Object o = nativeWebRequest.getAttribute("", RequestAttributes.SCOPE_REQUEST);
+        Object o = nativeWebRequest.getAttribute(RequestConstants.REQUEST_USER, RequestAttributes.SCOPE_REQUEST);
         if (o == null) {
             throw new RequestAuthorizedException();
         }

@@ -59,7 +59,7 @@ spring:
     database: 0
     host: 127.0.0.1
     port: 6379
-    password: eW95b2hyLmNvbQ==
+    password: xxxxxxx
     timeout: 300
     jedis:
       pool:
@@ -89,3 +89,7 @@ app:
     ttl: 60                       # token有效期 (默认一小时)
     refresh-ttl: 20160            # token无痛刷新有效期 (默认2周)
     refresh-concurrent-ttl: 5     # 并发请求临时缓存有效期 (默认5分钟)
+  route:
+    authorization:
+      exclude:
+        - /api/v1/test_login
