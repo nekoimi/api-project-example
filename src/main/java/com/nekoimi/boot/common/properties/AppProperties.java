@@ -6,15 +6,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * nekoimi  2021/7/19 下午3:37
+ * nekoimi  2021/7/20 上午10:49
  */
 @Getter
 @Setter
 @Component
-@ConfigurationProperties(prefix = "app.jwt")
-public class JWTProperties {
-    private String secret;
-    private Integer ttl;
-    private Integer refreshTtl;
-    private Integer refreshConcurrentTtl;
+@ConfigurationProperties(prefix = "app.main")
+public class AppProperties {
+    private String key;
 }

@@ -22,6 +22,7 @@ public enum Errors implements IError {
     HTTP_STATUS_NOT_FOUND(10404, "Not found"),
     HTTP_STATUS_METHOD_NOT_ALLOWED(10405, "Method not allowed"),
     // 业务相关异常，code 从 20000 开始往上加
+    FAILED_TO_ENCODER_ERROR_EXCEPTION(20001, "Encoder error"),
     FAILED_TO_OPERATION_ERROR_EXCEPTION(20001, "Operation failed"),
     FAILED_TO_NOT_FOUND_ERROR_EXCEPTION(20002, "Resource not found"),
     FAILED_TO_CREATE_ERROR_EXCEPTION(20003, "Failed to create resource"),
@@ -30,6 +31,7 @@ public enum Errors implements IError {
     // 底层中间件相关异常，code 从 50000 开始
     ID_GENERATOR_SYSTEM_CLOCK_EXCEPTION(50000, "System clock error"),
     REDIS_ERROR_EXCEPTION(50001, "Redis error"),
+    NOT_IMPLEMENTED_ERROR_EXCEPTION(50002, "Not implemented"),
 
     // 客户端请求异常
     DEFAULT_CLIENT_ERROR(99400, "无效的请求！"),
