@@ -7,7 +7,7 @@ import com.nekoimi.boot.framework.error.enums.Errors;
  * nekoimi  2021/7/19 上午11:13
  */
 public abstract class BaseRuntimeException extends RuntimeException {
-    private final static String JOIN_SYMBOL = " ";
+    private final static String JOIN_SYMBOL = ", ";
     protected int code;
     protected IError error;
     public BaseRuntimeException() {

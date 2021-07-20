@@ -70,7 +70,7 @@ public class JWTServiceImpl implements JWTService {
     }
 
     @Override
-    public synchronized String refresh(String token, JWTSubjectService jwtSubjectService) {
+    public synchronized String refresh(JWTSubjectService jwtSubjectService, String token) {
         // todo 这里需要检查这个token是否已经被刷新过 旧Token已经被刷新过就不需要在刷新了
         String refreshedToken = jwtStorage.getRefreshed(token);
         if (StringUtils.isNotBlank(refreshedToken)) {

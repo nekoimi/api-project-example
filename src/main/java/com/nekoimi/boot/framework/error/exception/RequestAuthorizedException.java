@@ -9,4 +9,8 @@ public class RequestAuthorizedException extends BaseRuntimeException {
     public RequestAuthorizedException() {
         super(Errors.HTTP_STATUS_UNAUTHORIZED);
     }
+
+    public RequestAuthorizedException(String message) {
+        super(Errors.HTTP_STATUS_UNAUTHORIZED, message);
+    }
 }
