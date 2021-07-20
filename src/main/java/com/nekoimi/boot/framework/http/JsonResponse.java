@@ -1,8 +1,11 @@
-package com.nekoimi.boot.common.utils;
+package com.nekoimi.boot.framework.http;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nekoimi.boot.framework.contract.Jsonable;
+import com.nekoimi.boot.framework.holder.ObjectMapperHolder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +13,7 @@ import java.util.List;
 /**
  * nekoimi  2021/6/28 下午5:54
  */
+@Slf4j
 @Getter
 public class JsonResponse implements Jsonable {
     private final int code;
@@ -42,7 +46,12 @@ public class JsonResponse implements Jsonable {
 
     @Override
     public String toJson() {
-        return JsonUtils.of(this).toJson();
+        try {
+            return ObjectMapperHolder.getObjectMapper().writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage());
+            return null;
+        }
     }
 
     public final static class Builder {

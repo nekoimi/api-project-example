@@ -1,4 +1,4 @@
-package com.nekoimi.boot.common.utils;
+package com.nekoimi.boot.framework.holder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
