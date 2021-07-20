@@ -24,7 +24,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 public class RedisConfiguration {
 
     public RedisConfiguration() {
-        log.debug("[Auto Config] init redis configuration");
+        log.debug("[Auto Configuration] RedisConfiguration!");
     }
 
     @Bean

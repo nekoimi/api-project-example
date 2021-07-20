@@ -14,7 +14,7 @@ public class JsonUtils {
 
     private JsonUtils(Object src) {
         this.src = src;
-        this.objectMapper = new ObjectMapper();
+        this.objectMapper = ObjectMapperHolder.getObjectMapper();
     }
 
     public static JsonUtils of(Object bean) {

@@ -24,11 +24,10 @@ public interface JWTService {
 
     /**
      * 刷新token 使用一个在刷新期限之内的旧Token获取一个新Token [无痛刷新]
-     * @param jwtSubjectService
      * @param token
      * @return
      */
-    String refresh(JWTSubjectService jwtSubjectService, String token);
+    String refresh(String token);
 
     /**
      * 解析Token 获取Token基本信息

@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class MyBatisPlusConfiguration {
 
     public MyBatisPlusConfiguration() {
-        log.debug("[Auto Config] init mybatis plus configuration");
+        log.debug("[Auto Configuration] MyBatisPlusConfiguration!");
     }
 
     /**
