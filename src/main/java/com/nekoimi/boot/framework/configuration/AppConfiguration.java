@@ -1,6 +1,6 @@
 package com.nekoimi.boot.framework.configuration;
 
-import com.nekoimi.boot.common.properties.AppProperties;
+import com.nekoimi.boot.framework.configuration.properties.AppProperties;
 import com.nekoimi.boot.framework.contract.PasswordEncoder;
 import com.nekoimi.boot.framework.contract.jwt.JWTSubjectService;
 import com.nekoimi.boot.framework.error.exception.FailedToEncoderErrorException;

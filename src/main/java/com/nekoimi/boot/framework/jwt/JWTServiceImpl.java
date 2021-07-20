@@ -4,7 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.nekoimi.boot.common.properties.JWTProperties;
+import com.nekoimi.boot.framework.configuration.properties.JWTProperties;
 import com.nekoimi.boot.framework.contract.jwt.JWTService;
 import com.nekoimi.boot.framework.contract.jwt.JWTStorage;
 import com.nekoimi.boot.framework.contract.jwt.JWTSubject;

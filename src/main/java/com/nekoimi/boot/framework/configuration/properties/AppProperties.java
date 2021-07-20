@@ -1,4 +1,4 @@
-package com.nekoimi.boot.common.properties;
+package com.nekoimi.boot.framework.configuration.properties;
 
 import lombok.Getter;
 import lombok.Setter;

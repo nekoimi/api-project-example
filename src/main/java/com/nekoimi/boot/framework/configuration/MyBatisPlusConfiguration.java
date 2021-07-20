@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize;
-import com.nekoimi.boot.common.properties.IdGeneratorProperties;
+import com.nekoimi.boot.framework.configuration.properties.IdGeneratorProperties;
 import com.nekoimi.boot.framework.gen.SnowflakeIdGenerator;
 import com.nekoimi.boot.framework.mybatis.handler.MybatisPlusMetaObjectHandler;
 import lombok.extern.slf4j.Slf4j;
