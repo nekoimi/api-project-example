@@ -13,5 +13,5 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "app.main")
 public class AppProperties {
-    private String key;
+    private String appKey;
 }

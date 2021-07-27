@@ -6,10 +6,9 @@ package com.nekoimi.boot.framework.contract.jwt;
  * 需要实现token自定义存储
  */
 public interface JWTStorage {
-    String TOKEN_PREFIX = "com.nekoimi.boot.framework.contract.jwt";
-    String TOKEN_BLACK_LIST = TOKEN_PREFIX + ".black.list:";
-    String TOKEN_REFRESH_PREFIX = TOKEN_PREFIX + ".refresh.prefix:";
-    String TOKEN_REFRESHED_PREFIX = TOKEN_PREFIX + ".refreshed.prefix:";
+    String TOKEN_BLACK_LIST = ".black.list:";
+    String TOKEN_REFRESH = ".refresh:";
+    String TOKEN_REFRESHED = ".refreshed:";
 
     /**
      * 获取Token的刷新期限

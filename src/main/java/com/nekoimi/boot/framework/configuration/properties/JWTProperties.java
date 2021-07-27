@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "app.jwt")
 public class JWTProperties {
+    private String storagePrefix;
     private String secret;
     private Integer ttl;
     private Integer refreshTtl;

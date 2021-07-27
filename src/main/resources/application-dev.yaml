@@ -80,15 +80,16 @@ mybatis-plus:
 
 app:
   main:
-    key: abc123456
+    app-key: abc123456
   id-generator:
     worker-id: 1
     data-center-id: 1
   jwt:
-    secret: mmJ/mnJ/kupQgMTc6NTM6MjEgQ1NUCg==
+    secret: ${spring.application.name}
     ttl: 60                       # token有效期 (默认一小时)
     refresh-ttl: 20160            # token无痛刷新有效期 (默认2周)
     refresh-concurrent-ttl: 5     # 并发请求临时缓存有效期 (默认5分钟)
+    storage-prefix: ${spring.application.name}
   route:
     authorization:
       exclude:

@@ -55,7 +55,7 @@ public class AppConfiguration {
             try {
                 Cipher.getMaxAllowedKeyLength(ALGORITHM);
                 cipher = Cipher.getInstance(ALGORITHM);
-                String key = properties.getKey();
+                String key = properties.getAppKey();
                 if (StringUtils.isBlank(key)) {
                     throw new FailedToEncoderErrorException("Key is empty");
                 }
