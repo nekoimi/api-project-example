@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.Base64Utils;
 
+import javax.annotation.PostConstruct;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -22,6 +23,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.TimeZone;
 
 /**
  * nekoimi  2021/7/20 上午9:51
@@ -31,6 +33,13 @@ import java.security.NoSuchAlgorithmException;
 public class AppConfiguration {
     public AppConfiguration() {
         log.debug("[Auto Configuration] AppConfiguration!");
+    }
+
+    @PostConstruct
+    public void setDefault() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Shanghai"));
+
+        log.debug("Set default success!");
     }
 
     @Bean
