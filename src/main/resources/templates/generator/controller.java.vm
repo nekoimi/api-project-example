@@ -7,7 +7,6 @@ package ${package.Controller};
 #end
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.nekoimi.boot.framework.mybatis.entity.BaseEntity;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.nekoimi.boot.common.annotaction.LoginRequired;
 import com.nekoimi.boot.framework.http.PaginatorResult;
 import ${package.Entity}.${entity};
@@ -48,8 +47,8 @@ public class ${table.controllerName} {
     public PaginatorResult<${entity}> list() {
         LambdaQueryWrapper<${entity}> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByDesc(BaseEntity::getCreatedAt);
-        IPage<${entity}> paginator = targetService.listPaginator(page(), pageSize(), wrapper);
-        return new PaginatorResult<>(paginator);
+        PaginatorResult<${entity}> result = targetService.listPaginator(page(), pageSize(), wrapper);
+        return result;
     }
 
     /**

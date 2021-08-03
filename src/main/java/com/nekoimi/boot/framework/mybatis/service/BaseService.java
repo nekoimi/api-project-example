@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.nekoimi.boot.framework.http.PaginatorResult;
 import org.apache.ibatis.annotations.Param;
 
 import java.io.Serializable;
@@ -132,7 +133,7 @@ public interface BaseService<E> {
      * @param pageSize 每页显示数量
      * @return pageList
      */
-    default IPage<E> listPaginator(int page, int pageSize) {
+    default PaginatorResult<E> listPaginator(int page, int pageSize) {
         return listPaginator(new Page<>(page, pageSize));
     }
 
@@ -142,7 +143,7 @@ public interface BaseService<E> {
      * @param pageSize 每页显示数量
      * @return pageList
      */
-    default IPage<E> listPaginator(int page, int pageSize, @Param(Constants.WRAPPER) Wrapper<E> wrapper) {
+    default PaginatorResult<E> listPaginator(int page, int pageSize, @Param(Constants.WRAPPER) Wrapper<E> wrapper) {
         return listPaginator(new Page<>(page, pageSize), wrapper);
     }
 
@@ -151,7 +152,7 @@ public interface BaseService<E> {
      * @param page IPage对象
      * @return pageList
      */
-    default IPage<E> listPaginator(IPage<E> page) {
+    default PaginatorResult<E> listPaginator(IPage<E> page) {
         return listPaginator(page, Wrappers.emptyWrapper());
     }
 
@@ -161,7 +162,7 @@ public interface BaseService<E> {
      * @param wrapper 查询对象
      * @return pageList
      */
-    IPage<E> listPaginator(IPage<E> page, @Param(Constants.WRAPPER) Wrapper<E> wrapper);
+    PaginatorResult<E> listPaginator(IPage<E> page, @Param(Constants.WRAPPER) Wrapper<E> wrapper);
 
 
     /**
@@ -170,7 +171,7 @@ public interface BaseService<E> {
      * @param pageSize 每页显示数量
      * @return pageList
      */
-    default IPage<Map<String, Object>> listMapPaginator(int page, int pageSize) {
+    default PaginatorResult<Map<String, Object>> listMapPaginator(int page, int pageSize) {
         return listMapPaginator(new Page<>(page, pageSize));
     }
 
@@ -180,7 +181,7 @@ public interface BaseService<E> {
      * @param pageSize 每页显示数量
      * @return pageList
      */
-    default IPage<Map<String, Object>> listMapPaginator(int page, int pageSize, @Param(Constants.WRAPPER) Wrapper<E> wrapper) {
+    default PaginatorResult<Map<String, Object>> listMapPaginator(int page, int pageSize, @Param(Constants.WRAPPER) Wrapper<E> wrapper) {
         return listMapPaginator(new Page<>(page, pageSize), wrapper);
     }
 
@@ -189,7 +190,7 @@ public interface BaseService<E> {
      * @param page IPage对象
      * @return pageList
      */
-    default IPage<Map<String, Object>> listMapPaginator(IPage<Map<String, Object>> page) {
+    default PaginatorResult<Map<String, Object>> listMapPaginator(IPage<Map<String, Object>> page) {
         return listMapPaginator(page, Wrappers.emptyWrapper());
     }
 
@@ -199,7 +200,7 @@ public interface BaseService<E> {
      * @param wrapper 查询对象
      * @return pageList
      */
-    IPage<Map<String, Object>> listMapPaginator(IPage<Map<String, Object>> page, @Param(Constants.WRAPPER) Wrapper<E> wrapper);
+    PaginatorResult<Map<String, Object>> listMapPaginator(IPage<Map<String, Object>> page, @Param(Constants.WRAPPER) Wrapper<E> wrapper);
 
 
     /**

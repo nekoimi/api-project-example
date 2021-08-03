@@ -1,7 +1,6 @@
 package com.nekoimi.boot.modules.user.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.nekoimi.boot.common.annotaction.LoginRequired;
 import com.nekoimi.boot.common.annotaction.Operator;
 import com.nekoimi.boot.framework.http.BaseController;
@@ -56,8 +55,8 @@ public class UserController extends BaseController {
     public PaginatorResult<User> list() {
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByDesc(BaseEntity::getCreatedAt);
-        IPage<User> paginator = targetService.listPaginator(page(), pageSize(), wrapper);
-        return new PaginatorResult<>(paginator);
+        PaginatorResult<User> result = targetService.listPaginator(page(), pageSize(), wrapper);
+        return result;
     }
 
     /**
