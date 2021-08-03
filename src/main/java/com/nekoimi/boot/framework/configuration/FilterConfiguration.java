@@ -1,6 +1,5 @@
 package com.nekoimi.boot.framework.configuration;
 
-import com.nekoimi.boot.framework.configuration.properties.RoutePatternsProperties;
 import com.nekoimi.boot.framework.contract.jwt.JWTService;
 import com.nekoimi.boot.framework.contract.jwt.JWTSubjectService;
 import com.nekoimi.boot.framework.filter.BeforeRequestFilter;
@@ -48,7 +47,6 @@ public class FilterConfiguration {
      */
     @Bean
     public FilterRegistrationBean<Filter> registerLoginRequiredFilter(
-            RoutePatternsProperties properties,
             JWTService jwtService,
             JWTSubjectService jwtSubjectService,
             RequestMappingHandlerMapping requestMappingHandler
@@ -59,7 +57,6 @@ public class FilterConfiguration {
         registrationBean.setFilter(new LoginRequiredFilter(jwtService, jwtSubjectService, requestMappingHandler));
         registrationBean.addUrlPatterns("/*");
         registrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1024);
-        registrationBean.addInitParameter("exclude", String.join(",", properties.getAuthorization().getExclude()));
         return registrationBean;
     }
 

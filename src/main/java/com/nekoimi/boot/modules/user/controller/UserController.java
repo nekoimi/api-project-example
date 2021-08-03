@@ -1,16 +1,17 @@
 package com.nekoimi.boot.modules.user.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.nekoimi.boot.common.annotaction.Operator;
-import com.nekoimi.boot.framework.mybatis.entity.BaseEntity;
-import com.nekoimi.boot.framework.http.JsonResponse;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.nekoimi.boot.common.annotaction.LoginRequired;
+import com.nekoimi.boot.common.annotaction.Operator;
+import com.nekoimi.boot.framework.http.BaseController;
+import com.nekoimi.boot.framework.http.PaginatorResult;
+import com.nekoimi.boot.framework.mybatis.entity.BaseEntity;
 import com.nekoimi.boot.modules.user.data.LoginResult;
 import com.nekoimi.boot.modules.user.entity.User;
 import com.nekoimi.boot.modules.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.nekoimi.boot.framework.http.BaseController;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -29,19 +30,20 @@ public class UserController extends BaseController {
     private UserService targetService;
 
     @GetMapping("ajax_test")
-    public JsonResponse ajaxTest() {
-        return ok("hello world");
+    public String ajaxTest() {
+        return "hello world";
     }
 
     @PostMapping("api/v1/test_login")
-    public JsonResponse login(@RequestBody Map<String, Object> map) {
+    public LoginResult login(@RequestBody Map<String, Object> map) {
         LoginResult result = targetService.login(map.getOrDefault("mobile", "").toString(), "");
-        return ok(result);
+        return result;
     }
 
+    @LoginRequired
     @GetMapping("api/v1/user/me")
-    public JsonResponse me(@Operator User user) {
-        return ok(user);
+    public User me(@Operator User user) {
+        return user;
     }
 
     /**
@@ -49,12 +51,13 @@ public class UserController extends BaseController {
      *
      * @return
      */
+    @LoginRequired
     @GetMapping("api/v1/user/list")
-    public JsonResponse list() {
+    public PaginatorResult<User> list() {
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByDesc(BaseEntity::getCreatedAt);
         IPage<User> paginator = targetService.listPaginator(page(), pageSize(), wrapper);
-        return ok(paginator);
+        return new PaginatorResult<>(paginator);
     }
 
     /**
@@ -62,12 +65,13 @@ public class UserController extends BaseController {
     *
     * @return
     */
+    @LoginRequired
     @GetMapping("api/v1/user/down")
-    public JsonResponse down() {
+    public Map down() {
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByDesc(BaseEntity::getCreatedAt);
         List<User> list = targetService.findAll(wrapper);
-        return ok("list", list);
+        return Map.of("list", list);
     }
 
     /**
@@ -76,10 +80,11 @@ public class UserController extends BaseController {
      * @param id
      * @return
      */
+    @LoginRequired
     @GetMapping("api/v1/user/{id}")
-    public JsonResponse get(@PathVariable("id") Serializable id) {
+    public User get(@PathVariable("id") Serializable id) {
         User result = targetService.getByOrFail(id);
-        return ok(result);
+        return result;
     }
 
     /**
@@ -87,11 +92,12 @@ public class UserController extends BaseController {
      *
      * @return
      */
+    @LoginRequired
     @PostMapping("api/v1/user")
-    public JsonResponse create(@RequestBody Map<String, Object> map) {
+    public User create(@RequestBody Map<String, Object> map) {
         Serializable id = targetService.create(map);
         User result = targetService.getBy(id);
-        return ok(result);
+        return result;
     }
 
     /**
@@ -100,10 +106,10 @@ public class UserController extends BaseController {
      * @param map
      * @return
      */
+    @LoginRequired
     @PutMapping("api/v1/user/{id}")
-    public JsonResponse update(@PathVariable("id") String id, @RequestBody Map<String, Object> map) {
+    public void update(@PathVariable("id") String id, @RequestBody Map<String, Object> map) {
         targetService.update(id, map);
-        return ok();
     }
 
     /**
@@ -112,10 +118,10 @@ public class UserController extends BaseController {
      * @param id
      * @return
      */
+    @LoginRequired
     @DeleteMapping("api/v1/user/{id}")
-    public JsonResponse remove(@PathVariable("id") String id) {
+    public void remove(@PathVariable("id") String id) {
         targetService.removeBy(id);
-        return ok();
     }
 
     /**
@@ -123,14 +129,14 @@ public class UserController extends BaseController {
      *
      * @return
      */
+    @LoginRequired
     @DeleteMapping("api/v1/user/batch")
-    public JsonResponse removeBatch(@RequestParam(value = "ids", required = false) String ids) {
+    public void removeBatch(@RequestParam(value = "ids", required = false) String ids) {
         if (ids == null || ids.trim().length() <= 0) {
-            return ok(); // Ignore.
+            return; // Ignore.
         }
         List<String> list = Arrays.asList(ids.trim().split("[,]"));
         targetService.removeBy(list);
-        return ok();
     }
 
 }

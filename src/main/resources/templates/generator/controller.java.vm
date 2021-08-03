@@ -7,8 +7,9 @@ package ${package.Controller};
 #end
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.nekoimi.boot.framework.mybatis.entity.BaseEntity;
-import com.nekoimi.boot.framework.http.JsonResponse;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.nekoimi.boot.common.annotaction.LoginRequired;
+import com.nekoimi.boot.framework.http.PaginatorResult;
 import ${package.Entity}.${entity};
 import ${package.Service}.${table.serviceName};
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,12 +43,13 @@ public class ${table.controllerName} {
      *
      * @return
      */
+    @LoginRequired
     @GetMapping("api/${cfg.apiVersion}/${cfg.routeName}/list")
-    public JsonResponse list() {
+    public PaginatorResult<${entity}> list() {
         LambdaQueryWrapper<${entity}> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByDesc(BaseEntity::getCreatedAt);
         IPage<${entity}> paginator = targetService.listPaginator(page(), pageSize(), wrapper);
-        return ok(paginator);
+        return new PaginatorResult<>(paginator);
     }
 
     /**
@@ -55,12 +57,13 @@ public class ${table.controllerName} {
     *
     * @return
     */
+    @LoginRequired
     @GetMapping("api/${cfg.apiVersion}/${cfg.routeName}/down")
-    public JsonResponse down() {
+    public Map down() {
         LambdaQueryWrapper<${entity}> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByDesc(BaseEntity::getCreatedAt);
         List<${entity}> list = targetService.findAll(wrapper);
-        return ok("list", list);
+        return Map.of("list", list);
     }
 
     /**
@@ -69,10 +72,11 @@ public class ${table.controllerName} {
      * @param id
      * @return
      */
+    @LoginRequired
     @GetMapping("api/${cfg.apiVersion}/${cfg.routeName}/{id}")
-    public JsonResponse get(@PathVariable("id") Serializable id) {
+    public ${entity} get(@PathVariable("id") Serializable id) {
         ${entity} result = targetService.getByOrFail(id);
-        return ok(result);
+        return result;
     }
 
     /**
@@ -80,11 +84,12 @@ public class ${table.controllerName} {
      *
      * @return
      */
+    @LoginRequired
     @PostMapping("api/${cfg.apiVersion}/${cfg.routeName}")
-    public JsonResponse create(@RequestBody Map<String, Object> map) {
+    public ${entity} create(@RequestBody Map<String, Object> map) {
         Serializable id = targetService.create(map);
         ${entity} result = targetService.getBy(id);
-        return ok(result);
+        return result;
     }
 
     /**
@@ -93,10 +98,10 @@ public class ${table.controllerName} {
      * @param map
      * @return
      */
+    @LoginRequired
     @PutMapping("api/${cfg.apiVersion}/${cfg.routeName}/{id}")
-    public JsonResponse update(@PathVariable("id") String id, @RequestBody Map<String, Object> map) {
+    public void update(@PathVariable("id") String id, @RequestBody Map<String, Object> map) {
         targetService.update(id, map);
-        return ok();
     }
 
     /**
@@ -105,10 +110,10 @@ public class ${table.controllerName} {
      * @param id
      * @return
      */
+    @LoginRequired
     @DeleteMapping("api/${cfg.apiVersion}/${cfg.routeName}/{id}")
-    public JsonResponse remove(@PathVariable("id") String id) {
+    public void remove(@PathVariable("id") String id) {
         targetService.removeBy(id);
-        return ok();
     }
 
     /**
@@ -116,14 +121,14 @@ public class ${table.controllerName} {
      *
      * @return
      */
+    @LoginRequired
     @DeleteMapping("api/${cfg.apiVersion}/${cfg.routeName}/batch")
-    public JsonResponse removeBatch(@RequestParam(value = "ids", required = false) String ids) {
+    public void removeBatch(@RequestParam(value = "ids", required = false) String ids) {
         if (ids == null || ids.trim().length() <= 0) {
-            return ok(); // Ignore.
+            return; // Ignore.
         }
         List<String> list = Arrays.asList(ids.trim().split("[,]"));
         targetService.removeBy(list);
-        return ok();
     }
 
 }

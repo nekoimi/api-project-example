@@ -2,6 +2,7 @@ package com.nekoimi.boot.framework.filter;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.nekoimi.boot.common.annotaction.LoginRequired;
 import com.nekoimi.boot.common.utils.RequestUtils;
 import com.nekoimi.boot.framework.constants.RequestConstants;
 import com.nekoimi.boot.framework.contract.jwt.JWTService;
@@ -12,6 +13,7 @@ import com.nekoimi.boot.framework.error.exception.RequestBadCredentialsException
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
@@ -19,9 +21,6 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Nekoimi  2020/5/31 21:19
@@ -29,7 +28,6 @@ import java.util.List;
 @Slf4j
 @Component
 public class LoginRequiredFilter implements Filter {
-    private final List<String> excludeUrlList = new ArrayList<>();
     private final JWTService jwtService;
     private final JWTSubjectService jwtSubjectService;
     private final RequestMappingHandlerMapping requestMappingHandler;
@@ -38,14 +36,6 @@ public class LoginRequiredFilter implements Filter {
         this.jwtService = jwtService;
         this.jwtSubjectService = jwtSubjectService;
         this.requestMappingHandler = requestMappingHandler;
-    }
-
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        String exclude = filterConfig.getInitParameter("exclude");
-        if (StringUtils.isNotBlank(exclude)) {
-            excludeUrlList.addAll(Arrays.asList(exclude.split("[,]")));
-        }
     }
 
     @Override
@@ -61,27 +51,11 @@ public class LoginRequiredFilter implements Filter {
             log.error(e.getMessage());
         }
         if (handler != null) {
-            String path = request.getRequestURI();
-            if (!excludeUrlList.contains(path)) {
-                boolean needCheck = true;
-                // 前缀匹配
-                for (String excludeUrl : excludeUrlList) {
-                    if (path.equals(excludeUrl)) {
-                        needCheck = false;
-                    } else {
-                        if (StringUtils.endsWith(excludeUrl, "*")) {
-                            int i = 10;
-                            do {
-                                excludeUrl = StringUtils.removeEnd(excludeUrl, "*");i--;
-                            } while (i >= 0 && StringUtils.endsWith(excludeUrl, "*"));
-                            excludeUrl = StringUtils.removeEnd(excludeUrl, "/");
-                            if (StringUtils.startsWith(path, excludeUrl)) {
-                                needCheck = false;
-                            }
-                        }
-                    }
-                }
-                if (needCheck) {
+            Object handlerObject = handler.getHandler();
+            if (handlerObject instanceof HandlerMethod) {
+                HandlerMethod handlerMethod = (HandlerMethod) handlerObject;
+                LoginRequired loginRequired = handlerMethod.getMethodAnnotation(LoginRequired.class);
+                if (loginRequired != null) {
                     doLoginRequired(request, response);
                 }
             }
