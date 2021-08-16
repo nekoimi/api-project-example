@@ -48,7 +48,7 @@ public class ResponseBodyWriteHandler implements ResponseBodyAdvice {
                 .timestamp(System.currentTimeMillis())
                 .data(body)
                 .build();
-        if (body instanceof Serializable) {
+        if (String.class.equals(body.getClass())) {
             return JsonUtils.toJson(ok);
         }
         return ok;
