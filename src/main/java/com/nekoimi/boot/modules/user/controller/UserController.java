@@ -50,7 +50,7 @@ public class UserController extends BaseController {
      *
      * @return
      */
-    @LoginRequired
+//    @LoginRequired
     @GetMapping("api/v1/user/list")
     public PaginatorResult<User> list() {
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();

@@ -30,10 +30,10 @@ public class BeforeRequestFilter implements Filter {
 
         log.debug("-------------------------- BeforeRequestFilter BEGIN --------------------------");
         if (RequestUtils.isPost(request) && RequestUtils.isMultipart(request)) {
-            filterChain.doFilter(request, servletResponse);
+            filterChain.doFilter(request, response);
         } else {
             // next
-            filterChain.doFilter(new HttpRequestWrapper(request), servletResponse);
+            filterChain.doFilter(new HttpRequestWrapper(request), response);
         }
         log.debug("-------------------------- BeforeRequestFilter END --------------------------");
     }

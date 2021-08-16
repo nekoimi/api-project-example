@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JsonUtils {
 
-    public String toJson(Object src) {
+    public static String toJson(Object src) {
         try {
             return ObjectMapperHolder.getObjectMapper().writeValueAsString(src);
         } catch (JsonProcessingException e) {
@@ -19,7 +19,7 @@ public class JsonUtils {
         }
     }
 
-    public <T> T toBean(String json, Class<T> resultType) {
+    public static  <T> T toBean(String json, Class<T> resultType) {
         try {
             return ObjectMapperHolder.getObjectMapper().readValue(json, resultType);
         } catch (JsonProcessingException e) {

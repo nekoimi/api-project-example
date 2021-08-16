@@ -1,5 +1,6 @@
 package com.nekoimi.boot.framework.http;
 
+import com.nekoimi.boot.common.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
@@ -40,11 +42,15 @@ public class ResponseBodyWriteHandler implements ResponseBodyAdvice {
         log.debug(request.getClass().toString());
         log.debug(response.getClass().toString());
 
-        return JsonResponse.builder().code(0).message("ok")
+        JsonResponse ok = JsonResponse.builder().code(0).message("ok")
                 .method(request.getMethodValue())
                 .path(request.getURI().getPath())
                 .timestamp(System.currentTimeMillis())
                 .data(body)
                 .build();
+        if (body instanceof Serializable) {
+            return JsonUtils.toJson(ok);
+        }
+        return ok;
     }
 }
