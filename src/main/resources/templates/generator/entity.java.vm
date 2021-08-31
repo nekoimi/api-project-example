@@ -26,9 +26,9 @@ import java.io.Serializable;
 #else
 @EqualsAndHashCode(callSuper = false)
 #end
-@NoArgsConstructor
+@NoArgsConstructor(staticName = "of")
 #end
-@TableName(autoResultMap = true)
+@TableName(value = "${table.name}", autoResultMap = true)
 #if(${superEntityClass})
 public class ${entity} extends ${superEntityClass} {
 #else

@@ -7,6 +7,10 @@ import com.nekoimi.boot.framework.error.enums.Errors;
  */
 public class RequestBadCredentialsException extends BaseRuntimeException {
     public RequestBadCredentialsException() {
-        super(Errors.HTTP_STATUS_UNAUTHORIZED, "Bad credentials");
+        super(Errors.REQUEST_BAD_CREDENTIALS_EXCEPTION);
+    }
+
+    public RequestBadCredentialsException(String message) {
+        super(Errors.REQUEST_BAD_CREDENTIALS_EXCEPTION, message);
     }
 }

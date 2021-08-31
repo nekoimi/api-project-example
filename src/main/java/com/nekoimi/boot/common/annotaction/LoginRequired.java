@@ -6,7 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * nekoimi  2021/8/3 上午10:53
+ * nekoimi  2020/7/2 下午2:39
+ *
+ * 权限验证
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

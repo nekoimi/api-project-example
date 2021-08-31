@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * nekoimi  2021/7/20 上午9:39
  */
 public class ObjectMapperHolder {
-    private static ObjectMapper objectMapper;
+    private static ObjectMapper objectMapper = new ObjectMapper();
 
     public static ObjectMapper getObjectMapper() {
         return objectMapper;

@@ -2,21 +2,23 @@ package com.nekoimi.boot.framework.http;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 /**
- * nekoimi  2021/6/28 上午10:43
+ * nekoimi  2021/7/28 上午11:33
  */
 @Getter
-public class PaginatorResult<T> {
+@Setter
+public class PagerResult<T> {
     private final long total;
     private final long lastPage;
     private final long currentPage;
     private final long perPage;
     private final List<T> list;
 
-    public PaginatorResult(IPage<T> page) {
+    public PagerResult(IPage<T> page) {
         this.total = page.getTotal();
         this.lastPage = page.getPages();
         this.currentPage = page.getCurrent();

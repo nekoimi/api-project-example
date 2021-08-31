@@ -1,4 +1,4 @@
-package com.nekoimi.boot.framework.configuration;
+package com.nekoimi.boot.framework.config;
 
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -14,13 +14,11 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.nekoimi.boot.framework.holder.ObjectMapperHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.autoconfigure.jackson.JacksonProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
 import java.io.IOException;
@@ -106,19 +104,14 @@ public class JsonConfiguration {
         return new LocalDateTimeDeserializer(DEFAULT_DATE_TIME_FORMATTER);
     }
 
-    /**
-     * 转换器全局配置
-     *
-     * @param converters
-     * @return
-     */
     @Bean
-    public HttpMessageConverters httpMessageConverters(List<HttpMessageConverter<?>> converters, ObjectMapper objectMapper) {
-        JacksonHttpMessageConverter jacksonHttpMessageConverter = new JacksonHttpMessageConverter();
-        jacksonHttpMessageConverter.setObjectMapper(objectMapper);
+    public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter(
+            ObjectMapper objectMapper) {
+        MappingJackson2HttpMessageConverter jsonConverter = new JacksonHttpMessageConverter();
+        jsonConverter.setObjectMapper(objectMapper);
         JacksonTypeHandler.setObjectMapper(objectMapper);
         ObjectMapperHolder.setObjectMapper(objectMapper);
-        return new HttpMessageConverters(jacksonHttpMessageConverter);
+        return jsonConverter;
     }
 
     public static final class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConverter {

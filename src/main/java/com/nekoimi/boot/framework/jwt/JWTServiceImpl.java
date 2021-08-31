@@ -1,10 +1,10 @@
 package com.nekoimi.boot.framework.jwt;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.nekoimi.boot.framework.configuration.properties.JWTProperties;
+import com.auth0.jwt.interfaces.Payload;
+import com.nekoimi.boot.framework.config.properties.JWTProperties;
 import com.nekoimi.boot.framework.contract.jwt.JWTService;
 import com.nekoimi.boot.framework.contract.jwt.JWTStorage;
 import com.nekoimi.boot.framework.contract.jwt.JWTSubject;
@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import java.util.Date;
 import java.util.Map;
@@ -31,7 +32,8 @@ public class JWTServiceImpl implements JWTService {
     private final JWTProperties jwtProperties;
     private final JWTStorage jwtStorage;
 
-    public JWTServiceImpl(JWTProperties jwtProperties, JWTStorage jwtStorage) {
+    public JWTServiceImpl(JWTProperties jwtProperties,
+                          JWTStorage jwtStorage) {
         this.issuer = getClass().toString();
         this.algorithm = Algorithm.HMAC256(jwtProperties.getSecret());
         this.jwtProperties = jwtProperties;
@@ -39,88 +41,87 @@ public class JWTServiceImpl implements JWTService {
     }
 
     @Override
-    public String encode(JWTSubject sub) {
-        Date now = new Date();
-
-        JWTCreator.Builder builder = JWT.create();
-
-        builder = builder.withIssuer(getClass().toString());
-        builder = builder.withIssuedAt(now);
-        builder = builder.withExpiresAt(DateUtils.addMinutes(now, jwtProperties.getTtl()));
-        builder = builder.withSubject(sub.getJWTIdentifier());
-
-        Map<String, String> jWTCustomClaims = sub.getJWTCustomClaims();
-        if (Objects.nonNull(jWTCustomClaims) && !jWTCustomClaims.isEmpty()) {
-            for (Map.Entry<String, String> entry : jWTCustomClaims.entrySet()) {
-                builder = builder.withClaim(entry.getKey(), entry.getValue());
-            }
-        }
-
-        String token = builder.sign(algorithm);
-
-        // 设置Token的刷新期限
-        jwtStorage.setRefresh(token, jwtProperties.getRefreshTtl());
-
-        return token;
+    public Mono<String> encode(JWTSubject sub) {
+        return Mono.defer(() -> Mono.just(new Date()))
+                .flatMap(date -> Mono.just(JWT.create())
+                        .map(builder -> builder.withIssuedAt(date))
+                        .map(builder -> builder.withExpiresAt(DateUtils.addMinutes(date, jwtProperties.getTtl())))
+                        .map(builder -> builder.withSubject(sub.getJWTIdentifier())))
+                .flatMap(builder -> Mono.just(sub.getJWTCustomClaims())
+                        .filter(Objects::nonNull)
+                        .filter(map -> !map.isEmpty())
+                        .map(map -> {
+                            for (Map.Entry<String, String> e : map.entrySet()) {
+                                builder.withClaim(e.getKey(), e.getValue());
+                            }
+                            return builder;
+                        })
+                ).map(builder -> builder.sign(algorithm))
+                .map(token -> {
+                    // 设置Token的刷新期限
+                    jwtStorage.setRefresh(token, jwtProperties.getRefreshTtl());
+                    return token;
+                });
     }
 
     @Override
-    public String decode(String token) {
-        return parse(token, true).getSubject();
+    public Mono<String> decode(String token) {
+        return parse(token, true).map(Payload::getSubject);
     }
 
     @Override
-    public synchronized String refresh(JWTSubjectService jwtSubjectService, String token) {
+    public synchronized Mono<String> refresh(JWTSubjectService jwtSubjectService, String token) {
         // todo 这里需要检查这个token是否已经被刷新过 旧Token已经被刷新过就不需要在刷新了
-        String refreshedToken = jwtStorage.getRefreshed(token);
+        String refreshedToken = jwtStorage.getRefreshed(token).block();
         if (StringUtils.isNotBlank(refreshedToken)) {
             jwtStorage.black(token);
-            return refreshedToken;
+            return Mono.just(refreshedToken);
         }
 
 
-        String refreshToken = jwtStorage.getRefresh(token);
+        String refreshToken = jwtStorage.getRefresh(token).block();
         if (StringUtils.isBlank(refreshToken)) {
             // 当前Token已经超过刷新期限了
-            throw new TokenCannotBeRefreshException();
+            return Mono.error(new TokenCannotBeRefreshException());
         }
 
-        JWTSubject jwtSubject = jwtSubjectService.loadUserById(parse(token, false).getSubject());
-
-        String newToken = encode(jwtSubject);
-        // todo 将旧Token设置为已经刷新过了
-        jwtStorage.setRefreshed(token, newToken, jwtProperties.getRefreshConcurrentTtl() <= jwtProperties.getTtl() ? jwtProperties.getRefreshConcurrentTtl() : jwtProperties.getTtl());
-
-        jwtStorage.black(token);
-
-        return newToken;
+        return parse(token, false)
+                .map(Payload::getSubject)
+                .flatMap(jwtSubjectService::loadUserById)
+                .flatMap(jwtSubject -> encode(jwtSubject).map(newToken -> {
+                    // todo 将旧Token设置为已经刷新过了
+                    jwtStorage.setRefreshed(token, newToken, jwtProperties.getRefreshConcurrentTtl() <= jwtProperties.getTtl() ? jwtProperties.getRefreshConcurrentTtl() : jwtProperties.getTtl());
+                    jwtStorage.black(token);
+                    return newToken;
+                }));
     }
 
     @Override
-    public DecodedJWT parse(String token, boolean isCheck) {
-        if (jwtStorage.isBlack(token)) {
-            String refreshedToken = jwtStorage.getRefreshed(token);
-            if (StringUtils.isBlank(refreshedToken)) {
-                throw new TokenHasBeenBlackListedException();
-            }
-
-            token = refreshedToken;
-        }
-
-        DecodedJWT decodedJWT = null;
-
-        if (isCheck) {
-            decodedJWT = JWT.require(algorithm).withIssuer(issuer).build().verify(token);
-        } else {
-            decodedJWT = JWT.decode(token);
-        }
-
-        return decodedJWT;
+    public Mono<DecodedJWT> parse(String token, boolean isCheck) {
+        return Mono.just(token)
+                .flatMap(jwtStorage::isBlack)
+                .map(b -> b ? Mono.empty() : Mono.just(token))
+                .switchIfEmpty(Mono.just(Mono.defer(() -> Mono.just(token))
+                        .flatMap(s -> jwtStorage.getRefreshed(s)
+                                .flatMap(result -> Mono.just(result)
+                                        .flatMap(rt -> StringUtils.isNotBlank(rt) ?
+                                                Mono.just(rt) :
+                                                Mono.error(new TokenHasBeenBlackListedException())))
+                        )))
+                .flatMap(mono -> mono.map(Object::toString).flatMap(s -> {
+                    DecodedJWT decodedJWT = null;
+                    if (isCheck) {
+                        decodedJWT = JWT.require(algorithm).withIssuer(issuer).build().verify(s);
+                    } else {
+                        decodedJWT = JWT.decode(s);
+                    }
+                    return Mono.just(decodedJWT);
+                }));
     }
 
     @Override
-    public void flush() {
-        jwtStorage.flush();
+    public Mono<Void> flush() {
+        return jwtStorage.flush();
     }
 
 }

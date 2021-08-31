@@ -1,108 +1,72 @@
 package com.nekoimi.boot.framework.filter;
 
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.nekoimi.boot.common.annotaction.LoginRequired;
 import com.nekoimi.boot.common.utils.RequestUtils;
 import com.nekoimi.boot.framework.constants.RequestConstants;
 import com.nekoimi.boot.framework.contract.jwt.JWTService;
-import com.nekoimi.boot.framework.contract.jwt.JWTSubject;
 import com.nekoimi.boot.framework.contract.jwt.JWTSubjectService;
 import com.nekoimi.boot.framework.error.exception.RequestAuthorizedException;
 import com.nekoimi.boot.framework.error.exception.RequestBadCredentialsException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.HandlerExecutionChain;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import org.springframework.web.reactive.result.method.annotation.RequestMappingHandlerMapping;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
+import reactor.core.publisher.Mono;
 
 /**
  * Nekoimi  2020/5/31 21:19
  */
 @Slf4j
 @Component
-public class LoginRequiredFilter implements Filter {
+public class LoginRequiredFilter implements WebFilter {
     private final JWTService jwtService;
     private final JWTSubjectService jwtSubjectService;
-    private final RequestMappingHandlerMapping requestMappingHandler;
+    private final RequestMappingHandlerMapping handlerMapping;
 
-    public LoginRequiredFilter(JWTService jwtService, JWTSubjectService jwtSubjectService, RequestMappingHandlerMapping requestMappingHandler) {
+    public LoginRequiredFilter(JWTService jwtService,
+                               JWTSubjectService jwtSubjectService,
+                               RequestMappingHandlerMapping handlerMapping) {
         this.jwtService = jwtService;
         this.jwtSubjectService = jwtSubjectService;
-        this.requestMappingHandler = requestMappingHandler;
+        this.handlerMapping = handlerMapping;
     }
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
-        HttpServletResponse response = (HttpServletResponse) servletResponse;
+    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain filterChain) {
         log.debug("-------------------------- LoginRequiredFilter BEGIN --------------------------");
-        HandlerExecutionChain handler = null;
-        try {
-            handler = requestMappingHandler.getHandler(request);
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-        }
-        if (handler != null) {
-            Object handlerObject = handler.getHandler();
-            if (handlerObject instanceof HandlerMethod) {
-                HandlerMethod handlerMethod = (HandlerMethod) handlerObject;
-                LoginRequired loginRequired = handlerMethod.getMethodAnnotation(LoginRequired.class);
-                if (loginRequired != null) {
-                    doLoginRequired(request, response);
-                }
-            }
-        }
-        log.debug("-------------------------- LoginRequiredFilter END --------------------------");
-
-        // next
-        filterChain.doFilter(request, response);
+        return handlerMapping.getHandler(exchange).flatMap(o -> doLoginRequired(exchange, o)).switchIfEmpty(filterChain.filter(exchange)).then();
     }
 
     /**
-     *
-     * @param request
-     * @param response
+     * @param exchange
+     * @param o
      */
-    private void doLoginRequired(HttpServletRequest request, HttpServletResponse response) {
-        String token = RequestUtils.getToken(request);
+    private Mono<Object> doLoginRequired(ServerWebExchange exchange, Object o) {
+        if (o == null) return Mono.empty();
+        String token = RequestUtils.getToken(exchange.getRequest());
+        log.debug("doLoginRequired - token: {}", token);
         if (StringUtils.isBlank(token)) {
-            throw new RequestAuthorizedException("Please check the authorization parameters");
+            return Mono.error(new RequestAuthorizedException("Please check the authorization parameters of the request headers"));
         }
-
-        boolean needRefreshToken = false;
-        String subId = null;
-        String newToken = null;
-
-        try {
-            subId = jwtService.decode(token);
-        } catch (TokenExpiredException ex) {
-            // todo token过期 需要尝试无痛刷新
-            newToken = jwtService.refresh(jwtSubjectService, token);
-            subId = jwtService.decode(newToken);
-            needRefreshToken = true;
-        } catch (JWTVerificationException | IllegalArgumentException ex3) {
-            throw new RequestBadCredentialsException();
-        }
-
-        if (StringUtils.isEmpty(subId)) {
-            throw new RequestBadCredentialsException();
-        }
-
-        JWTSubject jwtSubject = jwtSubjectService.loadUserById(subId);
-        String finalToken = StringUtils.isNotBlank(newToken) ? newToken : token;
-        request.setAttribute(RequestConstants.REQUEST_USER, jwtSubject);
-        if (needRefreshToken && StringUtils.isNotBlank(newToken)) {
-            // todo 存在newToken 需要在response Header中带上新 token
-            response.setHeader(RequestConstants.REQUEST_AUTHORIZATION, finalToken);
-        }
+        return jwtService.decode(token).onErrorResume(e -> {
+            if (e instanceof TokenExpiredException) {
+                // 刷新Token
+                return Mono.just(token).flatMap(oldToken -> jwtService.refresh(jwtSubjectService, oldToken).flatMap(newToken -> {
+                    exchange.getResponse().getHeaders().set(RequestConstants.REQUEST_AUTHORIZATION, newToken);
+                    return Mono.just(newToken);
+                }).flatMap(jwtService::decode));
+            }
+            log.error(e.getMessage());
+            return Mono.error(new RequestBadCredentialsException(e.getMessage()));
+        }).flatMap(subId -> {
+            if (StringUtils.isBlank(subId)) return Mono.error(new RequestBadCredentialsException());
+            return jwtSubjectService.loadUserById(subId).flatMap(jwtSubject -> {
+                exchange.getAttributes().put(RequestConstants.REQUEST_USER, jwtSubject);
+                return Mono.just(jwtSubject);
+            });
+        });
     }
-
 }

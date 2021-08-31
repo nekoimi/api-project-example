@@ -1,8 +1,7 @@
 package com.nekoimi.boot.modules.user.entity;
 
-import com.nekoimi.boot.framework.contract.jwt.JWTSubject;
-import com.nekoimi.boot.framework.mybatis.entity.BaseEntity;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.nekoimi.boot.framework.mybatis.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -10,13 +9,13 @@ import lombok.NoArgsConstructor;
 /**
  * User Entity
  *
- * nekoimi  2021-07-20
+ * nekoimi  2021-07-28
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@NoArgsConstructor
-@TableName(autoResultMap = true)
-public class User extends BaseEntity implements JWTSubject {
+@NoArgsConstructor(staticName = "of")
+@TableName(value = "user", autoResultMap = true)
+public class User extends BaseEntity {
     private static final long serialVersionUID=1L;
 
     public static final String MOBILE ="mobile";
@@ -28,8 +27,4 @@ public class User extends BaseEntity implements JWTSubject {
     private String password;
 
 
-    @Override
-    public String getJWTIdentifier() {
-        return id;
-    }
 }

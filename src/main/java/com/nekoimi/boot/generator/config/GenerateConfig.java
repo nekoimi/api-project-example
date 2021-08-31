@@ -1,7 +1,6 @@
 package com.nekoimi.boot.generator.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -36,7 +35,7 @@ public class GenerateConfig {
     /**
      * 代码生成包含的表，可为空，为空默认生成所有
      */
-    private String[] includeTables;
+    private String includeTable;
 
     /**
      * 生成代码里，注释的作者

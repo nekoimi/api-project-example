@@ -5,10 +5,6 @@ package ${package.Controller};
 #else
     #set($routePathName = ${table.entityPath})
 #end
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.nekoimi.boot.framework.mybatis.entity.BaseEntity;
-import com.nekoimi.boot.common.annotaction.LoginRequired;
-import com.nekoimi.boot.framework.http.PaginatorResult;
 import ${package.Entity}.${entity};
 import ${package.Service}.${table.serviceName};
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +12,6 @@ import org.springframework.web.bind.annotation.*;
 #if(${superControllerClassPackage})
 import ${superControllerClassPackage};
 #end
-
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 /**
  * ${entity} Controller
@@ -42,13 +33,12 @@ public class ${table.controllerName} {
      *
      * @return
      */
-    @LoginRequired
     @GetMapping("api/${cfg.apiVersion}/${cfg.routeName}/list")
-    public PaginatorResult<${entity}> list() {
+    public Mono<JsonResponse> list(ServerWebExchange exchange) {
         LambdaQueryWrapper<${entity}> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByDesc(BaseEntity::getCreatedAt);
-        PaginatorResult<${entity}> result = targetService.listPaginator(page(), pageSize(), wrapper);
-        return result;
+        PaginatorResult<User> result = targetService.listPaginator(page(exchange), pageSize(exchange), wrapper);
+        return JsonResponse.ok(result);
     }
 
     /**
@@ -56,13 +46,12 @@ public class ${table.controllerName} {
     *
     * @return
     */
-    @LoginRequired
     @GetMapping("api/${cfg.apiVersion}/${cfg.routeName}/down")
-    public Map down() {
+    public Mono<JsonResponse> down() {
         LambdaQueryWrapper<${entity}> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByDesc(BaseEntity::getCreatedAt);
         List<${entity}> list = targetService.findAll(wrapper);
-        return Map.of("list", list);
+        return JsonResponse.ok(Map.of("list", list));
     }
 
     /**
@@ -71,11 +60,10 @@ public class ${table.controllerName} {
      * @param id
      * @return
      */
-    @LoginRequired
     @GetMapping("api/${cfg.apiVersion}/${cfg.routeName}/{id}")
-    public ${entity} get(@PathVariable("id") Serializable id) {
+    public Mono<JsonResponse> get(@PathVariable("id") Serializable id) {
         ${entity} result = targetService.getByOrFail(id);
-        return result;
+        return JsonResponse.ok(result);
     }
 
     /**
@@ -83,12 +71,11 @@ public class ${table.controllerName} {
      *
      * @return
      */
-    @LoginRequired
     @PostMapping("api/${cfg.apiVersion}/${cfg.routeName}")
-    public ${entity} create(@RequestBody Map<String, Object> map) {
+    public Mono<JsonResponse> create(@RequestBody Map<String, Object> map) {
         Serializable id = targetService.create(map);
         ${entity} result = targetService.getBy(id);
-        return result;
+        return JsonResponse.ok(result);
     }
 
     /**
@@ -97,10 +84,10 @@ public class ${table.controllerName} {
      * @param map
      * @return
      */
-    @LoginRequired
     @PutMapping("api/${cfg.apiVersion}/${cfg.routeName}/{id}")
-    public void update(@PathVariable("id") String id, @RequestBody Map<String, Object> map) {
+    public Mono<JsonResponse> update(@PathVariable("id") String id, @RequestBody Map<String, Object> map) {
         targetService.update(id, map);
+        return JsonResponse.ok();
     }
 
     /**
@@ -109,10 +96,10 @@ public class ${table.controllerName} {
      * @param id
      * @return
      */
-    @LoginRequired
     @DeleteMapping("api/${cfg.apiVersion}/${cfg.routeName}/{id}")
-    public void remove(@PathVariable("id") String id) {
+    public Mono<JsonResponse> remove(@PathVariable("id") String id) {
         targetService.removeBy(id);
+        return JsonResponse.ok();
     }
 
     /**
@@ -120,14 +107,14 @@ public class ${table.controllerName} {
      *
      * @return
      */
-    @LoginRequired
     @DeleteMapping("api/${cfg.apiVersion}/${cfg.routeName}/batch")
-    public void removeBatch(@RequestParam(value = "ids", required = false) String ids) {
+    public Mono<JsonResponse> removeBatch(@RequestParam(value = "ids", required = false) String ids) {
         if (ids == null || ids.trim().length() <= 0) {
-            return; // Ignore.
+            return JsonResponse.ok(); // Ignore.
         }
         List<String> list = Arrays.asList(ids.trim().split("[,]"));
         targetService.removeBy(list);
+        return JsonResponse.ok();
     }
 
 }

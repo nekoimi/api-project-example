@@ -1,22 +1,17 @@
 package com.nekoimi.boot.framework.http;
 
 import com.nekoimi.boot.common.utils.RequestUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.web.server.ServerWebExchange;
 
 /**
- * nekoimi  2021/7/20 下午3:07
+ * nekoimi  2021/7/28 上午10:14
  */
 public abstract class BaseController {
-    @Autowired
-    protected HttpServletRequest request;
-
-    protected int page() {
-        return RequestUtils.getPage(request);
+    protected int page(ServerWebExchange exchange) {
+        return RequestUtils.getPage(exchange.getRequest());
     }
 
-    protected int pageSize() {
-        return RequestUtils.getPageSize(request);
+    protected int pageSize(ServerWebExchange exchange) {
+        return RequestUtils.getPageSize(exchange.getRequest());
     }
 }

@@ -1,6 +1,6 @@
-package com.nekoimi.boot.framework.configuration;
+package com.nekoimi.boot.framework.config;
 
-import com.nekoimi.boot.framework.configuration.properties.AppProperties;
+import com.nekoimi.boot.framework.config.properties.AppProperties;
 import com.nekoimi.boot.framework.contract.PasswordEncoder;
 import com.nekoimi.boot.framework.contract.jwt.JWTSubjectService;
 import com.nekoimi.boot.framework.error.exception.FailedToEncoderErrorException;
@@ -66,7 +66,7 @@ public class AppConfiguration {
                 cipher = Cipher.getInstance(ALGORITHM);
                 String key = properties.getAppKey();
                 if (StringUtils.isBlank(key)) {
-                    throw new FailedToEncoderErrorException("Key is empty");
+                    throw new FailedToEncoderErrorException("App key must be not empty!");
                 }
                 byte[] bytes = DigestUtils.md5(key.getBytes());
                 int ignore = bytes.length % 16;

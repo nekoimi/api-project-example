@@ -3,43 +3,47 @@ package com.nekoimi.boot.common.utils;
 import com.nekoimi.boot.framework.constants.RequestConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpMethod;
-
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.http.MediaType;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 
 /**
- * nekoimi  2021/7/7 上午10:34
+ * nekoimi  2021/7/28 上午10:15
  */
 public class RequestUtils {
-    public static Boolean isGet(HttpServletRequest request) {
-        return HttpMethod.GET.toString().equalsIgnoreCase(request.getMethod());
+    public static Boolean isGet(ServerHttpRequest request) {
+        return HttpMethod.GET == request.getMethod();
     }
 
-    public static Boolean isPost(HttpServletRequest request) {
-        return HttpMethod.POST.toString().equalsIgnoreCase(request.getMethod());
+    public static Boolean isPost(ServerHttpRequest request) {
+        return HttpMethod.POST == request.getMethod();
     }
 
-    public static Boolean isPut(HttpServletRequest request) {
-        return HttpMethod.PUT.toString().equalsIgnoreCase(request.getMethod());
+    public static Boolean isPut(ServerHttpRequest request) {
+        return HttpMethod.PUT == request.getMethod();
     }
 
-    public static Boolean isDelete(HttpServletRequest request) {
-        return HttpMethod.DELETE.toString().equalsIgnoreCase(request.getMethod());
+    public static Boolean isDelete(ServerHttpRequest request) {
+        return HttpMethod.DELETE == request.getMethod();
     }
 
-    public static Boolean isOptions(HttpServletRequest request) {
-        return HttpMethod.OPTIONS.toString().equalsIgnoreCase(request.getMethod());
+    public static Boolean isOptions(ServerHttpRequest request) {
+        return HttpMethod.OPTIONS == request.getMethod();
     }
 
-    public static Boolean isJsonRequest(HttpServletRequest request) {
-        return StringUtils.containsIgnoreCase(request.getContentType(), "application/json");
+    public static Boolean isJsonRequest(ServerHttpRequest request) {
+        return request.getHeaders().getContentType() == MediaType.APPLICATION_JSON;
     }
 
-    public static boolean isMultipart(HttpServletRequest request) {
-        return StringUtils.startsWithIgnoreCase(request.getContentType(), "multipart/");
+    public static boolean isMultipart(ServerHttpRequest request) {
+        MediaType contentType = request.getHeaders().getContentType();
+        if (contentType == null) {
+            return false;
+        }
+        return StringUtils.startsWithIgnoreCase(contentType.toString(), "multipart/");
     }
 
-    public static String getToken(HttpServletRequest request) {
-        String token = request.getHeader(RequestConstants.REQUEST_AUTHORIZATION);
+    public static String getToken(ServerHttpRequest request) {
+        String token = request.getHeaders().getFirst(RequestConstants.REQUEST_AUTHORIZATION);
         if (StringUtils.isBlank(token)) {
             return null;
         }
@@ -51,7 +55,7 @@ public class RequestUtils {
         return token;
     }
 
-    public static Integer getPage(HttpServletRequest request) {
+    public static Integer getPage(ServerHttpRequest request) {
         int page = 1;
         String[] pageKeys = new String[] {"page", "pageNum", "page_num", "page_index", "pageIndex"};
         for (String pageKey: pageKeys) {
@@ -63,7 +67,7 @@ public class RequestUtils {
         return page;
     }
 
-    public static Integer getPageSize(HttpServletRequest request) {
+    public static Integer getPageSize(ServerHttpRequest request) {
         int pageSize = 10;
         String[] pageKeys = new String[] {"pageSize", "page_size"};
         for (String pageKey: pageKeys) {
@@ -76,15 +80,18 @@ public class RequestUtils {
     }
 
 
-    public static boolean has(HttpServletRequest request, String key) {
-        return request.getParameter(key) != null;
+    public static boolean has(ServerHttpRequest request, String key) {
+        return request.getQueryParams().getFirst(key) != null;
     }
 
-    public static String getString(HttpServletRequest request, String key) {
-        return request.getParameter(key);
+    public static String getString(ServerHttpRequest request, String key) {
+        return request.getQueryParams().getFirst(key);
     }
 
-    public static int getInteger(HttpServletRequest request, String key) {
-        return Integer.parseInt(request.getParameter(key));
+    public static int getInteger(ServerHttpRequest request, String key) {
+        if (!has(request, key)) {
+            return -1;
+        }
+        return Integer.parseInt(getString(request, key));
     }
 }

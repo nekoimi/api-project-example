@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nekoimi.boot.framework.error.exception.FailedToCreateErrorException;
 import com.nekoimi.boot.framework.error.exception.FailedToNotFoundErrorException;
 import com.nekoimi.boot.framework.error.exception.FailedToUpdateErrorException;
-import com.nekoimi.boot.framework.http.PaginatorResult;
+import com.nekoimi.boot.framework.http.PagerResult;
 import com.nekoimi.boot.framework.mybatis.mapper.BaseMapper;
 import com.nekoimi.boot.framework.mybatis.service.BaseService;
 import org.apache.commons.lang3.StringUtils;
@@ -261,14 +261,14 @@ public abstract class BaseServiceImpl<M extends BaseMapper<E>, E> implements Bas
 
     @Transactional(readOnly = true)
     @Override
-    public PaginatorResult<E> listPaginator(IPage<E> page, Wrapper<E> wrapper) {
-        return new PaginatorResult<>(mapper.selectPage(page, wrapper));
+    public PagerResult<E> listPaginator(IPage<E> page, Wrapper<E> wrapper) {
+        return new PagerResult<>(mapper.selectPage(page, wrapper));
     }
 
     @Transactional(readOnly = true)
     @Override
-    public PaginatorResult<Map<String, Object>> listMapPaginator(IPage<Map<String, Object>> page, Wrapper<E> wrapper) {
-        return new PaginatorResult<>(mapper.selectMapsPage(page, wrapper));
+    public PagerResult<Map<String, Object>> listMapPaginator(IPage<Map<String, Object>> page, Wrapper<E> wrapper) {
+        return new PagerResult<>(mapper.selectMapsPage(page, wrapper));
     }
 
     @Transactional(rollbackFor = RuntimeException.class)

@@ -1,5 +1,7 @@
 package com.nekoimi.boot.framework.contract.jwt;
 
+import reactor.core.publisher.Mono;
+
 /**
  * @author Nekoimi  2020/5/28 上午11:01
  *
@@ -15,50 +17,50 @@ public interface JWTStorage {
      * @param token
      * @return
      */
-    String getRefresh(String token);
+    Mono<String> getRefresh(String token);
 
     /**
      * 设置Token刷新期限
      * @param token
      * @param minutes
      */
-    void setRefresh(String token, Integer minutes);
+    Mono<Void> setRefresh(String token, Integer minutes);
 
     /**
      * 用来判断token是否被刷新过
      * @param token
      * @return
      */
-    String getRefreshed(String token);
+    Mono<String> getRefreshed(String token);
 
     /**
      * 以旧token为键 新token为value 临时保存旧token已经被刷新的状态
      * @param token
      * @param newToken
      */
-    void setRefreshed(String token, String newToken, Integer minutes);
+    Mono<Void> setRefreshed(String token, String newToken, Integer minutes);
 
     /**
      * 将旧token加入黑名单
      * @param token
      */
-    void black(String token);
+    Mono<Void> black(String token);
 
     /**
      * 判断token是否被拉黑
      * @param token
      * @return
      */
-    boolean isBlack(String token);
+    Mono<Boolean> isBlack(String token);
 
     /**
      * 销毁token缓存
      * @param key
      */
-    void destroy(String key);
+    Mono<Void> destroy(String key);
 
     /**
      * 清空关于token的全部缓存
      */
-    void flush();
+    Mono<Void> flush();
 }

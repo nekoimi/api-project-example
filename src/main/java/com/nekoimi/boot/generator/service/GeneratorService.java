@@ -3,15 +3,10 @@ package com.nekoimi.boot.generator.service;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.*;
-import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
-import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
-import com.baomidou.mybatisplus.generator.config.po.TableInfo;
-import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.nekoimi.boot.generator.config.GenerateConfig;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -90,7 +85,7 @@ public class GeneratorService {
         // 接口实现类父类
         strategy.setSuperServiceImplClass("com.nekoimi.boot.framework.mybatis.service.impl.BaseServiceImpl");
         // 需要生成的表
-        strategy.setInclude(config.getIncludeTables());
+        strategy.setInclude(config.getIncludeTable());
         mpg.setStrategy(strategy);
 
 

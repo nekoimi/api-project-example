@@ -4,18 +4,19 @@ import com.nekoimi.boot.common.annotaction.Operator;
 import com.nekoimi.boot.framework.constants.RequestConstants;
 import com.nekoimi.boot.framework.error.exception.RequestAuthorizedException;
 import com.nekoimi.boot.framework.error.exception.RequestForbiddenException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
-import org.springframework.web.bind.support.WebDataBinderFactory;
-import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.method.support.ModelAndViewContainer;
+import org.springframework.web.reactive.BindingContext;
+import org.springframework.web.reactive.result.method.HandlerMethodArgumentResolver;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
 
 import java.lang.reflect.Parameter;
 
 /**
  * nekoimi  2021/7/2 下午3:11
  */
+@Slf4j
 public class OperatorArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
@@ -24,16 +25,18 @@ public class OperatorArgumentResolver implements HandlerMethodArgumentResolver {
     }
 
     @Override
-    public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) throws Exception {
-        Object o = nativeWebRequest.getAttribute(RequestConstants.REQUEST_USER, RequestAttributes.SCOPE_REQUEST);
+    public Mono<Object> resolveArgument(MethodParameter methodParameter, BindingContext ctx, ServerWebExchange serverWebExchange) {
+        Object o = ctx.getModel().getAttribute(RequestConstants.REQUEST_USER);
         if (o == null) {
             throw new RequestAuthorizedException();
         }
         Parameter p = methodParameter.getParameter();
         Class<?> typeClazz = p.getType();
+        log.debug("Resolve operator argument {}", typeClazz);
         if (!typeClazz.isInstance(o)) {
             throw new RequestForbiddenException();
         }
-        return o;
+        return Mono.just(o);
     }
+
 }

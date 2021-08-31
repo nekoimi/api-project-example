@@ -2,39 +2,14 @@ debug: true
 server:
   port: 8080
   shutdown: graceful
-  tomcat:
-    max-http-form-post-size: 100MB
-    max-connections: 20
-    connection-timeout: 10000
-    threads:
-      max: 20
-      min-spare: 10
   error:
-    path: /error
-    include-stacktrace: always
-    include-exception: true
-    include-message: always
-    include-binding-errors: always
     whitelabel:
       enabled: false
-  servlet:
-    context-path: /
 spring:
   application:
     name: application-name
   main:
     banner-mode: off
-    allow-bean-definition-overriding: true
-  servlet:
-    multipart:
-      enabled: true
-      max-file-size: 100MB
-      max-request-size: 100MB
-      file-size-threshold: 0
-  freemarker:
-    enabled: false
-  mvc:
-    throw-exception-if-no-handler-found: true
   datasource:
     platform: mysql
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -57,16 +32,18 @@ spring:
       connection-test-query: SELECT 1
   redis:
     database: 0
-    host: 127.0.0.1
+    host: 192.168.1.202
+    # host: 127.0.0.1
     port: 6379
-    password: xxxxxxx
+    password: eW95b2hyLmNvbQ==
     timeout: 300
-    jedis:
+    lettuce:
       pool:
         max-active: 8  # 最大连接数
         max-wait: -1   # 最大阻塞等待时间
         max-idle: 8    # 最大空闲时间
         min-idle: 0    # 最小空闲时间
+
 mybatis-plus:
   global-config:
     db-config:
@@ -89,4 +66,10 @@ app:
     ttl: 60                       # token有效期 (默认一小时)
     refresh-ttl: 20160            # token无痛刷新有效期 (默认2周)
     refresh-concurrent-ttl: 5     # 并发请求临时缓存有效期 (默认5分钟)
-    storage-prefix: ${spring.application.name}
+  route:
+    authorization:
+      exclude:
+        - /
+        - /ajax_test
+        - /api/v1/user/**
+        - /api/v1/test_login

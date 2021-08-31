@@ -24,14 +24,14 @@ public class GeneratorRun {
         config.setJdbcPassword("123456");
         config.setJdbcDriver("com.mysql.cj.jdbc.Driver");
         config.setParentPackage("com.nekoimi.boot.modules");
-        config.setOutputDir("/home/nekoimi/Developer/java_projects/Nekoimi/java-project-template-tomcat/java-project-template-for-tomcat/src/main/java");
+        config.setOutputDir("/home/nekoimi/Developer/java_projects/Nekoimi/java-project-template-tomcat/java-project-template-for-netty/src/main/java");
         config.setAuthor("nekoimi");
         config.setApiVersion("v1");
 
         // Custom ...
         config.setModuleName(cfg.getModuleName());
         config.setRouteName(cfg.getRouteName());
-        config.setIncludeTables(new String[]{cfg.getTableName()});
+        config.setIncludeTable(cfg.getTableName());
 
         GeneratorService.execute(config);
     }

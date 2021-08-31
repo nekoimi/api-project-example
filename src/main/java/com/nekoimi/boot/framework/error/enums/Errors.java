@@ -12,6 +12,7 @@ public enum Errors implements IError {
 
     // 和 Http 相近的异常， code 从 10000 开始
     REQUEST_VALIDATE_EXCEPTION(10004, "Invalid request"),
+    REQUEST_BAD_CREDENTIALS_EXCEPTION(10401, "Bad credentials"),
 
     TOKEN_CANNOT_BE_REFRESH_EXCEPTION(10100, "Token cannot be refresh"),
     TOKEN_HAS_BEEN_BLACKLISTED_EXCEPTION(10101, "The token has been blacklisted"),
