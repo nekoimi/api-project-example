@@ -7,7 +7,6 @@
     <version>1.0</version>
     <name>java-project-template</name>
     <description>模板项目</description>
-<!--    <packaging>war</packaging>-->
     <packaging>jar</packaging>
 
     <properties>

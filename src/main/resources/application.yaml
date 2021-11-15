@@ -1,3 +1,77 @@
+debug: true
+server:
+  port: 8080
+  shutdown: graceful
+  error:
+    whitelabel:
+      enabled: false
 spring:
   profiles:
     active: dev
+  application:
+    name: application-name
+  main:
+    banner-mode: off
+  datasource:
+    platform: mysql
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://127.0.0.1:3306/test_example?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+    # schema: classpath:sql/init-schema.sql
+    # data: classpath:sql/init-data.sql
+    initialization-mode: always
+    continue-on-error: false
+    hikari:
+      pool-name: HikariCP
+      auto-commit: true
+      minimum-idle: 5
+      maximum-pool-size: 15
+      max-lifetime: 1800000
+      idle-timeout: 30000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+  redis:
+    database: 0
+    host: 192.168.1.202
+    # host: 127.0.0.1
+    port: 6379
+    password: eW95b2hyLmNvbQ==
+    timeout: 300
+    lettuce:
+      pool:
+        max-active: 8  # 最大连接数
+        max-wait: -1   # 最大阻塞等待时间
+        max-idle: 8    # 最大空闲时间
+        min-idle: 0    # 最小空闲时间
+
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-value: CURRENT_TIMESTAMP()
+      logic-not-delete-value: NULL
+  configuration:
+    default-enum-type-handler: org.apache.ibatis.type.EnumOrdinalTypeHandler
+  type-enums-package: com.nekoimi.boot.modules.*.enums
+  mapper-locations: classpath*:com/nekoimi/boot/modules/**/mapper/**.xml
+  check-config-location: true
+
+app:
+  main:
+    app-key: abc123456
+  id-generator:
+    worker-id: 1
+    data-center-id: 1
+  jwt:
+    secret: ${spring.application.name}
+    ttl: 60                       # token有效期 (默认一小时)
+    refresh-ttl: 20160            # token无痛刷新有效期 (默认2周)
+    refresh-concurrent-ttl: 5     # 并发请求临时缓存有效期 (默认5分钟)
+  route:
+    authorization:
+      exclude:
+        - /
+        - /ajax_test
+        - /api/v1/user/**
+        - /api/v1/test_login
